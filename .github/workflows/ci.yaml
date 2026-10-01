@@ -1,0 +1,37 @@
+name: CI Python
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Check out your project's source code
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    # 2. Install and configure uv (Automatically manages Python versions too!)
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        # Enable automatic caching to make subsequent workflow runs instant
+        enable-cache: true
+        # Define the exact Python version your app needs
+        python-version: '3.12'
+
+    # 3. Install your project's dependencies
+    - name: Install dependencies
+      # Use 'uv pip install' if you have a requirements.txt file
+      run: uv pip install -r requirements.txt
+      
+      # NOTE: If you are using a modern `pyproject.toml` project structure structure instead, 
+      # replace the line above with: run: uv sync
+
+    # 4. Run your application tests or check build status
+    - name: Run tests
+      run: uv run pytest
